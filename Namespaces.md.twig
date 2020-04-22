@@ -1,0 +1,47 @@
+[{{ node.parent.name }}]({{ node.fullyQualifiedStructuralElementName }}{{ node.name }})
+---
+
+## {{ node.name }}
+{% if node.description %}{{ node.description|raw }}{% endif %}
+
+{% if node.children|length > 0 %}
+### Namespaces
+{% for namespace in node.children|sort_asc %}
+#### [{{ namespace.name }}](namespaces/{{ namespace.name }})
+{% endfor %}{% endif %}
+
+{% if node.traits|length > 0 %}
+### Traits
+{% for trait in node.traits|sort_asc %}
+#### [{{ trait.name }}](traits/{{ trait.name }})
+{% endfor %}{% endif %}
+
+{% if node.interfaces|length > 0 %}
+### Interfaces
+{% for interface in node.interfaces|sort_asc %}
+#### [{{ interface.name }}](interfaces/{{ interface.name }})
+{% endfor %}{% endif %}
+
+{% if node.classes|length > 0 %}
+### Classes
+{% for class in node.classes|sort_asc %}
+#### [{{ class.name }}]({{ path(class)|escape('url') }})
+{% if class.summary %}> *{{ class.summary }}*
+{% endif %}{% endfor %}{% endif %}
+
+{% if node.constants|length > 0 %}
+### Constants
+{% for constant in node.constants|sort_asc %}
+* {{ constant.name }}{% if constant.summary %}: {{ constant.summary }}{% endif %}
+{% endfor %}{% endif %}
+
+{% if node.functions|length > 0 %}
+### Functions
+{% for method in node.functions|sort_asc %}
+* [{{ method.name }}]({{ path(method)|escape('url') }})
+{% endfor %}{% endif %}
+
+{% if project.settings.shouldIncludeSource %}                    
+## Source
+[{{ node.name }}]({{ node.path }}{{ node.name }})
+{% endif %}

@@ -1,0 +1,38 @@
+`{{ node.path }}{{ node.name }}`
+
+## {{ node.summary }}
+{{ node.description|raw }}
+
+{% if node.package is not empty and node.package != '\\' %}### Package
+{{ node.subpackage ? (node.package ~ '\\' ~ node.subpackage) : node.package }}{% endif %}
+
+{% for tagName,tags in node.tags if tagName not in ['link', 'see', 'package', 'subpackage'] %}{% if tagName %}### {{ tagName }}
+{% for tag in tags %}{% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|markdown|raw }}
+{% endfor %}{% endif %}{% endfor %}
+
+{% for tagName,tags in node.tags if tagName in ['link', 'see'] %}{% if loop.first %}### See also{% endif %}
+{% for tag in tags %}[{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') ?: tag.link }})
+{% endfor %}{% endfor %}
+
+{% if node.traits|length > 0 %}### Traits</h2>{% for trait in node.traits|sort_asc %}
+{{ trait|route('class:short')|raw }}: *{{ trait.summary }}*
+{% endfor %}{% endif %}
+
+{% if node.interfaces|length > 0 %}### Interfaces</h2>{% for interface in node.interfaces|sort_asc %}
+{{ interface|route('class:short')|raw }}: *{{ interface.summary }}*
+{% endfor %}{% endif %}
+
+{% if node.classes|length > 0 %}### Classes</h2>{% for class in node.classes|sort_asc %}
+{{ class|route('class:short')|raw }}: *{{ class.summary }}*
+{% endfor %}{% endif %}
+
+{% if node.constants|length > 0 %}### Constants</h2>{% for constant in node.constants|sort_asc %}
+* block('constant')
+{% endfor %}{% endif %}
+
+{% if node.functions|length > 0 %}### Functions</h2>{% for method in node.functions|sort_asc %}
+* block('method')
+{% endfor %}{% endif %}
+
+{% if project.settings.shouldIncludeSource %}## Source
+[{{ node.name }}]({{ node.path }}{{ node.name }}){% endif %}
