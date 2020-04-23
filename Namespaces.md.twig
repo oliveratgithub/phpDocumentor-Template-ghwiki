@@ -1,13 +1,10 @@
-[{{ node.parent.name }}]({{ node.fullyQualifiedStructuralElementName }}{{ node.name }})
----
-
 ## {{ node.name }}
 {% if node.description %}{{ node.description|raw }}{% endif %}
 
 {% if node.children|length > 0 %}
 ### Namespaces
 {% for namespace in node.children|sort_asc %}
-#### [{{ namespace.name }}](namespaces/{{ namespace.name }})
+#### [{{ namespace.name }}](namespaces/{{ namespace.name|replace({'\\':""}) }})
 {% endfor %}{% endif %}
 
 {% if node.traits|length > 0 %}
@@ -45,3 +42,6 @@
 ## Source
 [{{ node.name }}]({{ node.path }}{{ node.name }})
 {% endif %}
+
+***
+[\\](Home) » [Namespaces](Namespaces) » [{{ node.parent.name }}](namespaces/{{ node.parent.name }})
