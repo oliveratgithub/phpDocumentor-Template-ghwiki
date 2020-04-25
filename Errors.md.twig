@@ -13,7 +13,7 @@
 
 {% for file in project.files %}
 {% if file.allerrors.count > 0 %}
-## {{ file.path }}
+## [{{ file.path }}](file-{{ file.name }})
 
 {{ file.allerrors.count }} Compilation errors
 

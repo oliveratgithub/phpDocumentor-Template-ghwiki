@@ -13,7 +13,7 @@
 
 {% for file in project.files %}
 {% if file.markers.count > 0 %}
-## {{ file.path }}
+## [{{ file.path }}](file-{{ file.name }})
 
 {{ file.markers.count }} Markers
 

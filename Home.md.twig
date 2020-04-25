@@ -1,9 +1,11 @@
 ## {{ project.name }}
+Last update `{{ "now"|date('F jS, Y \\a\\t H:i') }}`
 
 {% if project.indexes.namespaces|length > 0 or not project.indexes.packages %}
-### [Namespaces](Namespaces)
+### Namespaces
+##### [\\](Namespaces)
 {% for namespace in project.indexes.namespaces|sort_asc if namespace.name != '\\' %}
-##### [{{ namespace.name|raw }}](namespaces/{{ namespace.name }})
+##### [{{ namespace.name|raw }}](ns-{{ namespace.name }})
 
 {% endfor %}
 {% endif %}
@@ -19,7 +21,7 @@
 {% if project.indexes.classes|length > 0 %}
 ### Classes
 {% for class in project.indexes.classes|sort_asc %}
-##### [{{ class.name|raw }}](classes/{{ class.name }})
+##### [{{ class.name|raw }}](class-{{ class.name }})
 
 {% endfor %}
 {% endif %}
@@ -27,7 +29,7 @@
 {% if project.indexes.constants|length > 0 %}
 ### Constants
 {% for constant in project.indexes.constants|sort_asc %}
-##### [{{ constant.name|raw }}](files/{{ node.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }})
+##### [{{ constant.name|raw }}](file-{{ node.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }})
 {% endfor %}
 {% endif %}
 

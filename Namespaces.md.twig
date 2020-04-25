@@ -4,26 +4,31 @@
 {% if node.children|length > 0 %}
 ### Namespaces
 {% for namespace in node.children|sort_asc %}
-#### [{{ namespace.name }}](namespaces/{{ namespace.name|replace({'\\':""}) }})
+#### [{{ namespace.name }}](ns-{{ namespace.name|replace({'\\':""}) }})
 {% endfor %}{% endif %}
 
 {% if node.traits|length > 0 %}
 ### Traits
 {% for trait in node.traits|sort_asc %}
-#### [{{ trait.name }}](traits/{{ trait.name }})
-{% endfor %}{% endif %}
+#### [{{ trait.name }}](trait-{{ trait.name }})
+{% if trait.summary %}*{{ trait.summary }}*
+
+{% endif %}{% endfor %}{% endif %}
 
 {% if node.interfaces|length > 0 %}
 ### Interfaces
 {% for interface in node.interfaces|sort_asc %}
-#### [{{ interface.name }}](interfaces/{{ interface.name }})
-{% endfor %}{% endif %}
+#### [{{ interface.name }}](interface-{{ interface.name }})
+{% if interface.summary %}*{{ interface.summary }}*
+
+{% endif %}{% endfor %}{% endif %}
 
 {% if node.classes|length > 0 %}
 ### Classes
 {% for class in node.classes|sort_asc %}
-#### [{{ class.name }}]({{ path(class)|escape('url') }})
-{% if class.summary %}> *{{ class.summary }}*
+#### [{{ class.name }}](class-{{ class.name }})
+{% if class.summary %}*{{ class.summary }}*
+
 {% endif %}{% endfor %}{% endif %}
 
 {% if node.constants|length > 0 %}
@@ -34,8 +39,8 @@
 
 {% if node.functions|length > 0 %}
 ### Functions
-{% for method in node.functions|sort_asc %}
-* [{{ method.name }}]({{ path(method)|escape('url') }})
+{% for key, method in node.functions|sort_asc %}
+* [{{ method.name }}](file-{{ method.path|split('/')|last }})
 {% endfor %}{% endif %}
 
 {% if project.settings.shouldIncludeSource %}                    
@@ -44,4 +49,4 @@
 {% endif %}
 
 ***
-[\\](Home) » [Namespaces](Namespaces) » [{{ node.parent.name }}](namespaces/{{ node.parent.name }})
+[\\](Home) » [Namespaces](Namespaces) » [{{ node.parent.name }}](ns-{{ node.parent.name }})

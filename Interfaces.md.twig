@@ -2,15 +2,13 @@
 
 ---
 
-## {{ node.name }}
+## {{ node.summary }}
 {% if node.description %}{{ node.description|raw }}{% endif %}
 
 {% if method.deprecated %}`Deprecated !`
 
 > *{{ method.tags.deprecated[0].description }}*
 {% endif %}
-
-{% if node.abstract %}`abstract`{% endif %}{% if node.final %}`final`{% endif %}
 
 {% for tagName,tags in node.tags if tagName in ['example'] %}
 {% if loop.first %}### Examples
@@ -23,7 +21,13 @@
 {% endfor %}
 
 #### Package
-{% if node.package.name is not empty and node.package.name != '\\' %}{{ node.package.parent.name != '\\' ? (node.package.parent.name ~ '\\' ~ node.package.name) : node.package.name }}{% endif %}
+{% if node.package is not empty and node.package != '\\' %}{{ node.subpackage ? (node.package ~ '\\' ~ node.subpackage) : node.package }}{% endif %}
+
+{% for parent in node.parent %}
+{% if loop.first %}#### Parents
+{% endif %}
+- [{{ parent.fullyQualifiedStructuralElementName }}]({{ parent|route('url') }})
+{% endfor %}
 
 {% for tagName,tags in node.tags if tagName in ['link', 'see'] %}
 {% if loop.first %}**See also**
@@ -33,52 +37,32 @@
 {% endfor %}
 {% endfor %}
 
-{% for tagName,tags in node.tags if tagName in ['uses'] %}
-{% if loop.first %}**Uses**
-{% endif %}
-{% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ (tag.reference|route('url')) }})
-{% endfor %}
-{% endfor %}
-
-{% for interface in node.interfaces %}
-{% if loop.first %}### Implements
-{% endif %}
-[{{ interface.fullyQualifiedStructuralElementName }}]({{ interface|route('url') }})
-{% endfor %}
-
-{% for trait in node.usedTraits %}
-{% if loop.first %}### Uses traits
-{% endif %}
-{% if trait.fullyQualifiedStructuralElementName %}[{{ trait.fullyQualifiedStructuralElementName ?: trait }}]({{ trait|route('url') }}){% endif %}
-{% endfor %}
-
-{% for tagName,tags in node.tags if tagName not in ['link', 'see', 'uses', 'abstract', 'example', 'method', 'property', 'property-read', 'property-write', 'package', 'subpackage'] %}
+{% for tagName,tags in node.tags if tagName Name not in ['link', 'see', 'abstract', 'method', 'package', 'subpackage'] %}
 #### {{ tagName }}
 {% for tag in tags %}
 * {% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
 {% endfor %}{% endfor %}
 
-### Overview
 
-#### Public Properties
-{% for property in node.inheritedProperties.merge(node.properties.merge(node.magicProperties))|sort_asc if property.visibility == 'public' %}[{{ property.name }}()](#{{ property.name }}){% if property.deprecated %} `deprecated`{% endif %} | {% else %}_No public properties found_{% endfor %}
+### Overview
 
 #### Constants
 {% for constant in node.inheritedConstants.merge(node.constants)|sort_asc %}[{{ constant.name }}()](#{{ constant.name }}){% if constant.deprecated %} `deprecated`{% else %} | {% endif %}{% else %}_No constants found_{% endfor %}
 
 #### Public Methods
-{% for method in node.inheritedMethods.merge(node.methods.merge(node.magicMethods))|sort_asc if method.visibility == 'public' %}[{{ method.name }}()](#{{ method.name }}){% if method.deprecated %} `deprecated`{% endif %} | {% else %}_No public methods found_{% endfor %}
+{% for method in node.inheritedMethods.merge(node.methods)|sort_asc if method.visibility == 'public' %}[{{ method.name }}()](#{{ method.name }}){% if method.deprecated %} `deprecated`{% endif %} | {% else %}_No public methods found_{% endfor %}
+
+#### Proteced Methods
+{% for method in node.inheritedMethods.merge(node.methods)|sort_asc if method.visibility == 'protected' %}[{{ method.name }}()](#{{ method.name }}){% if method.deprecated %} `deprecated`{% endif %} | {% else %}_No protected methods found_{% endfor %}
 
 
-{% set constants = node.inheritedConstants.merge(node.constants) %}
-{% if constants|length > 0 %}### Constants
+{% if node.constants|length > 0 %}### Constants
 
-{% for constant in constants|sort_asc %}
+{% for constant in node.inheritedConstants.merge(node.constants)|sort_asc %}
 #### {{ constant.name }}
 `{{ constant.name }} = {{ constant.value|raw }}{% if not (constant.types is empty) %} : {{ constant.types|join('|') }}{% endif %}`
 {% if (node.parent is not null and constant.parent.fullyQualifiedStructuralElementName != node.fullyQualifiedStructuralElementName) %}
-* Inherited from [{{ constant.parent.fullyQualifiedStructuralElementName }}](class-{{ constant.parent.fullyQualifiedStructuralElementName|split('\\')|last }})
+* Inherited from [{{ constant.parent.fullyQualifiedStructuralElementName }}](class-{{ constant.parent.fullyQualifiedStructuralElementName|replace({'\\':""}) }})
 {% endif %}
 {% if constant.deprecated %}`deprecated` {{ constant.tags.deprecated[0].description }}{% endif %}
 
@@ -111,53 +95,9 @@
 {% endif %}
 
 
-{% set properties = node.inheritedProperties.merge(node.properties.merge(node.magicProperties)) %}
-{% if properties|length > 0 %}### Properties
+{% if node.inheritedMethods.merge(node.methods)|length > 0 %}### Methods
 
-{% for property in properties|sort_asc %}
-#### {{ property.name }}
-
-{{ property.summary }}
-
-{% if property.description %}> {{ property.description|raw }}{% endif %}
-
-`{{ property.visibility }}` `${{ property.name }}{% if property.types %} : {{ property.types|join('|') }}{% endif %}`
-{% if (node.parent is not null and property.parent.fullyQualifiedStructuralElementName != node.fullyQualifiedStructuralElementName) %}
-* Inherited from [{{ property.parent.fullyQualifiedStructuralElementName }}](class-{{ property.parent.fullyQualifiedStructuralElementName|split('\\')|last }})
-{% endif %}
-{% if property.deprecated %}`deprecated` {{ property.tags.deprecated[0].description }}{% endif %}
-
-{% if property.types %}
-{{ property.types }}{% if property.var.0.description %}: {{ property.var.0.description }}{% endif %}
-{% endif %}
-
-{% for tagName,tags in property.tags if tagName in ['link', 'see'] %}
-{% if loop.first %}**See also**
-{% endif %}
-{% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') ?: tag.link }})
-{% endfor %}
-{% endfor %}
-{% for tagName,tags in property.tags if tagName in ['uses'] %}
-{% if loop.first %}**Uses**
-{% endif %}
-{% for tag in tags %}[{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') }}){% endfor %}
-{% endfor %}
-{% for tagName,tags in property.tags if tagName not in ['link', 'see', 'access', 'var', 'deprecated', 'uses'] %}
-{% if loop.first %}##### Tags
-{% endif %}
-{% for tag in tags %}
-- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
-{% endfor %}
-{% endfor %}
-{% endfor %}
-{% endif %}
-
-
-{% set methods = node.inheritedMethods.merge(node.methods.merge(node.magicMethods)) %}
-{% if methods|length > 0 %}### Methods
-
-{% for method in methods|sort_asc %}
+{% for method in node.inheritedMethods.merge(node.methods)|sort_asc %}
 #### {{ method.name }}()
 
 {{ method.summary }}
@@ -165,7 +105,7 @@
 {% if method.description %}> {{ method.description|raw }}{% endif %}
 
 {% if (method.parent is not null and method.parent.fullyQualifiedStructuralElementName != method.fullyQualifiedStructuralElementName) %}
-* Inherited from [{{ method.parent.fullyQualifiedStructuralElementName }}](class-{{ method.parent.fullyQualifiedStructuralElementName|split('\\')|last }})
+* Inherited from [{{ method.parent.fullyQualifiedStructuralElementName }}](class-{{ method.parent.fullyQualifiedStructuralElementName|replace({'\\':""}) }})
 {% endif %}
 
 `{{ method.visibility }}` `{{ method.name }}({% for argument in method.arguments %}{{ argument.types ? argument.types|join('|')~' ' }} {{ argument.isVariadic ? '...' }}${{ argument.name }}{{ argument.default ? ' = '~argument.default }}{% if not loop.last %}, {% endif %}{% endfor %}) {{ method.response.types ? ': '~method.response.types|join('|') }}`
@@ -226,4 +166,4 @@
 {% endfor %}
 
 ***
-[\\](Home) » Classes » {{ node.name }}
+[\\](Home) » Interfaces » {{ node.name }}
