@@ -78,7 +78,7 @@
 #### {{ constant.name }}
 `{{ constant.name }} = {{ constant.value|raw }}{% if not (constant.types is empty) %} : {{ constant.types|join('|') }}{% endif %}`
 {% if (node.parent is not null and constant.parent.fullyQualifiedStructuralElementName != node.fullyQualifiedStructuralElementName) %}
-* Inherited from [{{ constant.parent.fullyQualifiedStructuralElementName }}](classes/{{ constant.parent.fullyQualifiedStructuralElementName|replace({'\\':""}) }})
+* Inherited from [{{ constant.parent.fullyQualifiedStructuralElementName }}](class-{{ constant.parent.fullyQualifiedStructuralElementName|split('\\')|last }})
 {% endif %}
 {% if constant.deprecated %}`deprecated` {{ constant.tags.deprecated[0].description }}{% endif %}
 
@@ -86,7 +86,7 @@
 
 {% if constant.description %}> {{ constant.description|raw }}{% endif %}
 
-{% if (node.parent is null) %}[{{ node.path }}](files/{{ node.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }}){% endif %}
+{% if (node.parent is null) %}[{{ node.path }}](file-{{ node.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }}){% endif %}
 
 {% for tagName,tags in constant.tags if tagName in ['link', 'see'] %}
 {% if loop.first %}**See also**
@@ -123,7 +123,7 @@
 
 `{{ property.visibility }}` `${{ property.name }}{% if property.types %} : {{ property.types|join('|') }}{% endif %}`
 {% if (node.parent is not null and property.parent.fullyQualifiedStructuralElementName != node.fullyQualifiedStructuralElementName) %}
-* Inherited from [{{ property.parent.fullyQualifiedStructuralElementName }}](classes/{{ property.parent.fullyQualifiedStructuralElementName|replace({'\\':""}) }})
+* Inherited from [{{ property.parent.fullyQualifiedStructuralElementName }}](class-{{ property.parent.fullyQualifiedStructuralElementName|split('\\')|last }})
 {% endif %}
 {% if property.deprecated %}`deprecated` {{ property.tags.deprecated[0].description }}{% endif %}
 
@@ -165,14 +165,14 @@
 {% if method.description %}> {{ method.description|raw }}{% endif %}
 
 {% if (method.parent is not null and method.parent.fullyQualifiedStructuralElementName != method.fullyQualifiedStructuralElementName) %}
-* Inherited from [{{ method.parent.fullyQualifiedStructuralElementName }}](classes/{{ method.parent.fullyQualifiedStructuralElementName|replace({'\\':""}) }})
+* Inherited from [{{ method.parent.fullyQualifiedStructuralElementName }}](class-{{ method.parent.fullyQualifiedStructuralElementName|split('\\')|last }})
 {% endif %}
 
 `{{ method.visibility }}` `{{ method.name }}({% for argument in method.arguments %}{{ argument.types ? argument.types|join('|')~' ' }} {{ argument.isVariadic ? '...' }}${{ argument.name }}{{ argument.default ? ' = '~argument.default }}{% if not loop.last %}, {% endif %}{% endfor %}) {{ method.response.types ? ': '~method.response.types|join('|') }}`
 {% if method.deprecated %}`deprecated`{% if method.tags.deprecated[0].version %} `>{{ method.tags.deprecated[0].version }}`{% endif %} {{ method.tags.deprecated[0].description }}{% endif %}
 {% if method.static %}`static` {% endif %}{% if method.abstract %}`abstract` {% endif %}{% if method.final %}`final` {% endif %}
 
-{% if (method.parent is null) %}[{{ method.path }}](files/{{ method.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }}){% endif %}
+{% if (method.parent is null) %}[{{ method.path }}](file-{{ method.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }}){% endif %}
 
 {% for tagName,tags in method.tags if tagName in ['link', 'see'] %}
 {% if loop.first %}**See also**

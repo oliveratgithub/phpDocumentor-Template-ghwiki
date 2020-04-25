@@ -2,7 +2,8 @@
 
 {% if project.namespace.children|length > 0 %}
 {% for namespace in project.namespace.children|sort_asc %}
-[{{ namespace.name }}](namespaces/{{ namespace.name }})
+[{{ namespace.name }}](ns-{{ namespace.name }})
+
 {% endfor %}
 {% endif %}
 

@@ -8,7 +8,7 @@
 
 {% for element in project.indexes.elements if element.deprecated %}
 {% if element.file.path != previousPath %}
-## {{ element.file.path }}
+## [{{ element.file.path }}](file-{{ element.file.name }})
 
 {{ element.tags.deprecated.count }} Deprecated elements
 {% endif %}
