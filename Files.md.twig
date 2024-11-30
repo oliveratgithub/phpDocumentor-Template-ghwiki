@@ -7,7 +7,7 @@
 {% for tagName,tags in node.tags if tagName not in ['link', 'see', 'package', 'subpackage'] %}
 {% if tagName %}#### {{ tagName }}
 {% for tag in tags %}
-{% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
+{% if tag.version %}`{{ tag.version }}` {% endif %}{% if tag.types|length > 0 %}`{{ tag.types }}` {% endif %}{{ tag.description|raw }}
 {% endfor %}
 {% endif %}{% endfor %}
 

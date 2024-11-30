@@ -13,7 +13,8 @@
 {% if node.abstract %}`abstract`{% endif %}{% if node.final %}`final`{% endif %}
 
 {% for tagName,tags in node.tags if tagName in ['example'] %}
-{% if loop.first %}### Examples
+{% if loop.first %}
+### Examples
 {% endif %}
 {% for tag in tags %}
 #### {{ tag.description|escape }}
@@ -26,29 +27,33 @@
 {% if node.package.name is not empty and node.package.name != '\\' %}{{ node.package.parent.name != '\\' ? (node.package.parent.name ~ '\\' ~ node.package.name) : node.package.name }}{% endif %}
 
 {% for tagName,tags in node.tags if tagName in ['link', 'see'] %}
-{% if loop.first %}**See also**
+{% if loop.first %}
+**See also**
 {% endif %}
 {% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ (tag.reference|route('url')) ?: tag.link }})
+- [{{ tag.description ?: tag.reference }}]({{ tag.reference ?: tag.link }})
 {% endfor %}
 {% endfor %}
 
 {% for tagName,tags in node.tags if tagName in ['uses'] %}
-{% if loop.first %}**Uses**
+{% if loop.first %}
+**Uses**
 {% endif %}
 {% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ (tag.reference|route('url')) }})
+- [{{ tag.description ?: tag.reference }}]({{ tag.reference }})
 {% endfor %}
 {% endfor %}
 
 {% for interface in node.interfaces %}
-{% if loop.first %}### Implements
+{% if loop.first %}
+### Implements
 {% endif %}
 [{{ interface.fullyQualifiedStructuralElementName }}]({{ interface|route('url') }})
 {% endfor %}
 
 {% for trait in node.usedTraits %}
-{% if loop.first %}### Uses traits
+{% if loop.first %}
+### Uses traits
 {% endif %}
 {% if trait.fullyQualifiedStructuralElementName %}[{{ trait.fullyQualifiedStructuralElementName ?: trait }}]({{ trait|route('url') }}){% endif %}
 {% endfor %}
@@ -56,7 +61,7 @@
 {% for tagName,tags in node.tags if tagName not in ['link', 'see', 'uses', 'abstract', 'example', 'method', 'property', 'property-read', 'property-write', 'package', 'subpackage'] %}
 #### {{ tagName }}
 {% for tag in tags %}
-* {% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
+* {% if tag.version %}`{{ tag.version }}` {% endif %}{% if tag.types|length > 0 %}`{{ tag.types }}` {% endif %}{{ tag.description|raw }}
 {% endfor %}{% endfor %}
 
 ### Overview
@@ -89,22 +94,25 @@
 {% if (node.parent is null) %}[{{ node.path }}](file-{{ node.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }}){% endif %}
 
 {% for tagName,tags in constant.tags if tagName in ['link', 'see'] %}
-{% if loop.first %}**See also**
+{% if loop.first %}
+**See also**
 {% endif %}
 {% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') ?: tag.link }})
+- [{{ tag.description ?: tag.reference }}]({{ tag.reference ?: tag.link }})
 {% endfor %}
 {% endfor %}
 {% for tagName,tags in constant.tags if tagName in ['uses'] %}
-{% if loop.first %}**Uses**
+{% if loop.first %}
+**Uses**
 {% endif %}
-{% for tag in tags %}[{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') }}){% endfor %}
+{% for tag in tags %}[{{ tag.description ?: tag.reference }}]({{ tag.reference }}){% endfor %}
 {% endfor %}
 {% for tagName,tags in constant.tags if tagName not in ['link', 'see', 'var', 'deprecated', 'uses'] %}
-{% if loop.first %}##### Tags
+{% if loop.first %}
+##### Tags
 {% endif %}
 {% for tag in tags %}
-- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
+- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{% if tag.types|length > 0 %}`{{ tag.types }}` {% endif %}{{ tag.description|raw }}
 {% endfor %}
 {% endfor %}
 {% endfor %}
@@ -132,22 +140,27 @@
 {% endif %}
 
 {% for tagName,tags in property.tags if tagName in ['link', 'see'] %}
-{% if loop.first %}**See also**
+{% if loop.first %}
+**See also**
 {% endif %}
 {% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') ?: tag.link }})
+- [{{ tag.description ?: tag.reference }}]({{ tag.reference ?: tag.link }})
 {% endfor %}
 {% endfor %}
 {% for tagName,tags in property.tags if tagName in ['uses'] %}
-{% if loop.first %}**Uses**
-{% endif %}
-{% for tag in tags %}[{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') }}){% endfor %}
-{% endfor %}
-{% for tagName,tags in property.tags if tagName not in ['link', 'see', 'access', 'var', 'deprecated', 'uses'] %}
-{% if loop.first %}##### Tags
+{% if loop.first %}
+**Uses**
 {% endif %}
 {% for tag in tags %}
-- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
+[{{ tag.description ?: tag.reference }}]({{ tag.reference }})
+{% endfor %}
+{% endfor %}
+{% for tagName,tags in property.tags if tagName not in ['link', 'see', 'access', 'var', 'deprecated', 'uses'] %}
+{% if loop.first %}
+##### Tags
+{% endif %}
+{% for tag in tags %}
+- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{% if tag.types|length > 0 %}`{{ tag.types }}` {% endif %}{{ tag.description|raw }}
 {% endfor %}
 {% endfor %}
 {% endfor %}
@@ -175,22 +188,27 @@
 {% if (method.parent is null) %}[{{ method.path }}](file-{{ method.path|split('/')|last|replace({'.php':".php.md", '.js':".js.md"}) }}){% endif %}
 
 {% for tagName,tags in method.tags if tagName in ['link', 'see'] %}
-{% if loop.first %}**See also**
+{% if loop.first %}
+**See also**
 {% endif %}
 {% for tag in tags %}
-- [{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') ?: tag.link }})
+- [{{ tag.description ?: tag.reference }}]({{ tag.reference ?: tag.link }})
 {% endfor %}
 {% endfor %}
 {% for tagName,tags in method.tags if tagName in ['uses'] %}
-{% if loop.first %}**Uses**
-{% endif %}
-{% for tag in tags %}[{{ tag.description ?: tag.reference }}]({{ tag.reference|route('url') }}){% endfor %}
-{% endfor %}
-{% for tagName,tags in method.tags if tagName not in ['link', 'see', 'abstract', 'example', 'param', 'return', 'access', 'deprecated', 'throws', 'throw', 'uses'] %}
-{% if loop.first %}##### Tags
+{% if loop.first %}
+**Uses**
 {% endif %}
 {% for tag in tags %}
-- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{{ tag.description|raw }}
+[{{ tag.description ?: tag.reference }}]({{ tag.reference }})
+{% endfor %}
+{% endfor %}
+{% for tagName,tags in method.tags if tagName not in ['link', 'see', 'abstract', 'example', 'param', 'return', 'access', 'deprecated', 'throws', 'throw', 'uses'] %}
+{% if loop.first %}
+##### Tags
+{% endif %}
+{% for tag in tags %}
+- **{{ tagName }}**: {% if tag.version %}`{{ tag.version }}` {% endif %}{% if tag.types|length > 0 %}`{{ tag.types }}` {% endif %}{{ tag.description|raw }}
 {% endfor %}
 {% endfor %}
 {% endfor %}
@@ -216,7 +234,9 @@
 {% endif %}
 
 {% for tagName,tags in method.tags if tagName in ['example'] %}
-{% if loop.first %}##### Examples{% endif %}
+{% if loop.first %}
+##### Examples
+{% endif %}
 {% for tag in tags %}
 **{{ tag.description|escape }}**
 ```
